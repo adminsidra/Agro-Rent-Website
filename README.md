@@ -16,5 +16,5 @@ Agro Rent is a simple and user-friendly web platform that allows farmers to **re
 - **Backend:** PHP / Flask / Node.js *(specify based on your actual code)*
 - **Database:** MySQL / SQLite *(specify actual DB used)*
 
-
+The Agro-Rent site is live at https://adminsidra.github.io/Agro-Rent-Website/
 
