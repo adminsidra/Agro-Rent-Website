@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .equipment-form {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        #imagePreview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Equipment Management System</h1>
+    
+    <button id="listEquipmentBtn">List Equipment</button>
+    <button id="findEquipmentBtn" onclick="window.location.href='find-equipment.html'">Find Equipment</button>
+    
+    <div id="equipmentForm" class="equipment-form">
+        <h2>Upload New Equipment</h2>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="equipmentName">Equipment Name:</label>
+                <input type="text" id="equipmentName" name="equipmentName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="equipmentPrice">Rental Price per Day ($):</label>
+                <input type="number" id="equipmentPrice" name="equipmentPrice" min="0" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="equipmentPhoto">Equipment Photo:</label>
+                <input type="file" id="equipmentPhoto" name="equipmentPhoto" accept="image/*" required>
+                <img id="imagePreview" src="/api/placeholder/200/200" alt="Image preview">
+            </div>
+            
+            <div class="form-group">
+                <label for="equipmentDescription">Description (Optional):</label>
+                <textarea id="equipmentDescription" name="equipmentDescription" rows="3"></textarea>
+            </div>
+            
+            <button type="submit">Upload Equipment</button>
+        </form>
+    </div>
+
+    <script>
+        // Show/hide the equipment form when the List Equipment button is clicked
+        document.getElementById('listEquipmentBtn').addEventListener('click', function() {
+            const form = document.getElementById('equipmentForm');
+            if (form.style.display === 'block') {
+                form.style.display = 'none';
+            } else {
+                form.style.display = 'block';
+            }
+        });
+
+        // Handle image preview
+        document.getElementById('equipmentPhoto').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                const preview = document.getElementById('imagePreview');
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('equipmentName').value;
+            const price = document.getElementById('equipmentPrice').value;
+            const description = document.getElementById('equipmentDescription').value;
+            const photoInput = document.getElementById('equipmentPhoto');
+            
+            // Create equipment object
+            const equipment = {
+                name: name,
+                price: parseFloat(price),
+                description: description,
+                photoUrl: photoInput.files.length > 0 ? URL.createObjectURL(photoInput.files[0]) : null
+            };
+            
+            // Store in localStorage (in a real app, you'd use a database)
+            let equipmentList = JSON.parse(localStorage.getItem('equipmentList')) || [];
+            equipmentList.push(equipment);
+            
+            // Store back to localStorage
+            localStorage.setItem('equipmentList', JSON.stringify(equipmentList));
+            
+            // Reset form
+            document.getElementById('uploadForm').reset();
+            document.getElementById('imagePreview').style.display = 'none';
+            
+            // Show confirmation and redirect
+            alert('Equipment added successfully!');
+            window.location.href = 'find-equipment.html';
+        });
+    </script>
+</body>
+</html>
